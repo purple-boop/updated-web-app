@@ -1,96 +1,49 @@
-// const Footer = () => {
-//   return (
-//     <footer className="bg-rose-300 py-6">
-//       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 gap-6 text-center md:text-left">
-//         {/* Logo + Social Icons */}
-//         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-//           <img
-//             src="./src/elements/logo.png"
-//             alt="Logo"
-//             className="h-16 w-16 rounded-full bg-white p-2"
-//           />
-
-import { Link } from "react-router-dom";
-
-//           <div className="flex gap-3 sm:gap-4">
-//             <img
-//               src="./src/elements/fb.avif"
-//               alt="Facebook"
-//               className="h-7 rounded-full"
-//             />
-//             <img
-//               src="./src/elements/ig.avif"
-//               alt="Instagram"
-//               className="h-7 rounded-full"
-//             />
-//             <img
-//               src="./src/elements/tiktok.png"
-//               alt="Tiktok"
-//               className="h-7 rounded-full"
-//             />
-//           </div>
-//         </div>
-
-//         {/* Footer Links */}
-//         <div className="flex flex-col sm:flex-row gap-3 sm:gap-10 text-white font-medium">
-//           <a className="hover:text-rose-100 cursor-pointer">CONTACT US</a>
-//           <a className="hover:text-rose-100 cursor-pointer">
-//             TERMS & CONDITION
-//           </a>
-//         </div>
-//       </div>
-//     </footer>
-//   );
-// };
-
-// export default Footer;
-
-const Footer = () => {
+const Footer = ({ onOpenTerms }) => {
   return (
-    <footer className="bg-rose-300 py-10">
+    <footer className="bg-gradient-to-r from-rose-300 to-pink-300 py-10 shadow-inner border-t-2 border-rose-200">
       <div
         className="
-          max-w-7xl mx-auto 
-          flex flex-col md:flex-row 
-          justify-center md:justify-between 
-          items-center md:items-center 
+          max-w-7xl mx-auto
+          flex flex-col md:flex-row
+          justify-center md:justify-between
+          items-center
           px-6 gap-10
         "
       >
-        {/* LEFT SIDE — CONTACT US + SOCIALS */}
-        <div className="flex flex-col gap-3 text-white items-center md:items-start">
-          <h3 className="text-lg font-bold">CONTACT US</h3>
+        {/* LEFT — CONTACT & SOCIALS */}
+        <div className="flex flex-col gap-3 text-white items-center md:items-start drop-shadow-sm">
+          <h3 className="text-xl font-bold tracking-wide">CONTACT US</h3>
 
           <div className="flex gap-4 mt-1">
             <img
               src="/src/elements/fb.avif"
-              alt="Facebook"
-              className="h-7 w-7 rounded-full"
+              className="h-8 w-8 rounded-full shadow-md border border-white hover:scale-110 transition"
             />
             <img
               src="/src/elements/ig.avif"
-              alt="Instagram"
-              className="h-7 w-7 rounded-full"
+              className="h-8 w-8 rounded-full shadow-md border border-white hover:scale-110 transition"
             />
             <img
               src="/src/elements/tiktok.png"
-              alt="Tiktok"
-              className="h-7 w-7 rounded-full"
+              className="h-8 w-8 rounded-full shadow-md border border-white hover:scale-110 transition"
             />
           </div>
         </div>
 
-        {/* RIGHT SIDE — INLINE CUSTOMER SERVICE + TERMS */}
-        <div className="flex flex-col text-white items-center md:items-end">
-          <div className="flex gap-6 text-white font-semibold text-lg">
-            <span className="cursor-pointer hover:text-rose-100">
-              <Link to="/customer-service">Customer Service</Link>
-            </span>
+        {/* RIGHT — INLINE LINKS */}
+        <div className="flex gap-8 text-white font-semibold text-lg">
+          {/* CUSTOMER SERVICE */}
+          <span className="cursor-pointer hover:text-rose-100 transition drop-shadow-sm">
+            <a href="/customer-service">Customer Service</a>
+          </span>
 
-            <span className="cursor-pointer hover:text-rose-100">
-              <Link to="/terms-and-conditions">Terms & Conditions</Link>
-            </span>
-          </div>
+          {/* TERMS — OPENS MODAL */}
+          <span
+            className="cursor-pointer hover:text-rose-100 transition drop-shadow-sm"
+            onClick={onOpenTerms}
+          >
+            Terms & Conditions
+          </span>
         </div>
       </div>
     </footer>

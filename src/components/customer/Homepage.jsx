@@ -130,13 +130,14 @@ const HomePage = () => {
 
         {/* BEST SELLERS CARDS */}
         <div className="max-w-[900px] w-full grid grid-cols-1 md:grid-cols-3 gap-16 px-6 mt-4">
-          {/* CARD 1 */}
           <div className="bg-white/80 backdrop-blur-sm shadow-xl rounded-xl overflow-hidden">
             <img
               src="/src/elements/cupcake6.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+
+            {/* Centered details */}
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">Redvelvet Cupcake</h3>
               <p className="text-gray-700 text-xs">
                 Soft red velvet cupcake topped with creamy vanilla frosting.
@@ -150,7 +151,7 @@ const HomePage = () => {
               src="/src/elements/slicecake.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">Chocolate Cake</h3>
               <p className="text-gray-700 text-xs">
                 Decadent chocolate cake baked to sweet perfection.
@@ -164,7 +165,7 @@ const HomePage = () => {
               src="/src/elements/tart.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">Raspberry Tart</h3>
               <p className="text-gray-700 text-xs">
                 Fresh raspberries on a buttery tart crust.
@@ -192,7 +193,7 @@ const HomePage = () => {
               src="/src/elements/cupcake.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">Lemon Cheese Cupcake</h3>
               <p className="text-gray-700 text-xs">
                 Fresh lemon topping with creamy cheesecake base.
@@ -206,7 +207,7 @@ const HomePage = () => {
               src="/src/elements/tarts.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">
                 Mini Lemon Meringue Tart
               </h3>
@@ -223,7 +224,7 @@ const HomePage = () => {
               src="/src/elements/donuts.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">
                 Vanilla Bean Cake Donuts
               </h3>
@@ -239,7 +240,7 @@ const HomePage = () => {
               src="/src/elements/tarts2.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">
                 Mini Cranberry Orange Tarts
               </h3>
@@ -256,7 +257,7 @@ const HomePage = () => {
               src="/src/elements/slicecake2.jpg"
               className="w-full h-[150px] object-cover"
             />
-            <div className="p-4">
+            <div className="p-4 text-center flex flex-col items-center">
               <h3 className="text-lg font-bold mb-1">
                 Yellow Velvet Oreo Cheesecake
               </h3>
