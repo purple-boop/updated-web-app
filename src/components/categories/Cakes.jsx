@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "../../lib/supabaseClient";
 
 // IMAGE IMPORTS
@@ -35,40 +35,63 @@ const Cakes = () => {
     },
   ];
 
+  // qty default = 0
   const [qty, setQty] = useState(items.map(() => 0));
+  const [user, setUser] = useState(null);
 
+  // GET LOGGED-IN USER
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data?.user);
+    };
+    getUser();
+  }, []);
+
+  // HANDLE QTY CHANGE
   const handleQtyChange = (index, value) => {
-    const num = Math.max(1, Math.min(10, Number(value)));
+    let num = Number(value);
+
+    if (num < 0) num = 0;
+    if (num > 10) num = 10;
+
     const updated = [...qty];
     updated[index] = num;
     setQty(updated);
   };
 
-  const handleAddToCart = async (item, qty) => {
-    if (qty === 0) {
-      alert("Please select quantity");
+  // ADD TO CART FUNCTION
+  const handleAddToCart = async (item, selectedQty) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
+
+    if (selectedQty < 1) {
+      alert("Please select at least 1 quantity.");
       return;
     }
 
     const { error } = await supabase.from("cart").insert([
       {
+        user_id: user.id,
         product_name: item.name,
         price: parseFloat(item.price.replace("₱", "")),
-        qty: qty,
+        qty: selectedQty,
         img: item.img,
       },
     ]);
 
     if (error) {
-      alert("Error adding to cart");
+      alert("Error adding to cart.");
     } else {
-      alert("✔ Successfully added to cart!");
+      alert("✔ Added to cart!");
     }
   };
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* ⭐ BACKGROUND VIDEO */}
+      {/* BACKGROUND VIDEO */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
@@ -94,6 +117,7 @@ const Cakes = () => {
               className="bg-white/90 backdrop-blur-md p-6 rounded-xl shadow-lg hover:scale-[1.02] transition"
             >
               <div className="flex gap-6">
+                {/* IMAGE */}
                 <div className="w-1/2">
                   <img
                     src={item.img}
@@ -102,6 +126,7 @@ const Cakes = () => {
                   />
                 </div>
 
+                {/* INFO */}
                 <div className="w-1/2 flex flex-col justify-center text-center">
                   <h2 className="text-xl font-bold text-pink-700">
                     {item.name}
@@ -111,6 +136,7 @@ const Cakes = () => {
                     {item.price}
                   </p>
 
+                  {/* BUTTON + QTY */}
                   <div className="flex justify-center items-center gap-3 mt-4">
                     <button
                       onClick={() => handleAddToCart(item, qty[index])}
@@ -121,7 +147,7 @@ const Cakes = () => {
 
                     <input
                       type="number"
-                      min="1"
+                      min="0"
                       max="10"
                       value={qty[index]}
                       onChange={(e) => handleQtyChange(index, e.target.value)}

@@ -34,18 +34,24 @@ const Macaroons = () => {
     },
   ];
 
+  // ⭐ DEFAULT QUANTITY = 0
   const [qty, setQty] = useState(items.map(() => 0));
 
   const handleQtyChange = (index, value) => {
-    const num = Math.max(1, Math.min(10, Number(value)));
+    let num = Number(value);
+
+    if (num < 0) num = 0; // Prevent negative
+    if (num > 10) num = 10; // Max 10 only
+
     const updated = [...qty];
     updated[index] = num;
     setQty(updated);
   };
 
-  const handleAddToCart = async (item, qty) => {
-    if (qty === 0) {
-      alert("Please select quantity first!");
+  // ⭐ ADD TO CART
+  const handleAddToCart = async (item, qtyValue) => {
+    if (qtyValue === 0) {
+      alert("⚠️ Please enter quantity first!");
       return;
     }
 
@@ -53,13 +59,14 @@ const Macaroons = () => {
       {
         product_name: item.name,
         price: parseFloat(item.price.replace("₱", "")),
-        qty: qty,
+        qty: qtyValue,
         img: item.img,
       },
     ]);
 
     if (error) {
       alert("❌ Error adding to cart!");
+      console.log(error);
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -67,7 +74,7 @@ const Macaroons = () => {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* ⭐ BACKGROUND VIDEO */}
+      {/* Background Video */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
@@ -77,10 +84,8 @@ const Macaroons = () => {
         playsInline
       />
 
-      {/* DARK OVERLAY */}
       <div className="absolute inset-0 bg-black/40"></div>
 
-      {/* CONTENT */}
       <div className="relative z-10 py-16 px-6">
         <h1 className="text-3xl font-bold text-white text-center mb-10">
           Macaroons 🥮
@@ -93,7 +98,6 @@ const Macaroons = () => {
               className="bg-white/90 backdrop-blur-md p-6 rounded-xl shadow-lg hover:scale-[1.02] transition"
             >
               <div className="flex gap-6">
-                {/* IMAGE */}
                 <div className="w-1/2">
                   <img
                     src={item.img}
@@ -102,7 +106,6 @@ const Macaroons = () => {
                   />
                 </div>
 
-                {/* DETAILS */}
                 <div className="w-1/2 flex flex-col justify-center text-center">
                   <h2 className="text-xl font-bold text-pink-700">
                     {item.name}
@@ -122,7 +125,7 @@ const Macaroons = () => {
 
                     <input
                       type="number"
-                      min="1"
+                      min="0"
                       max="10"
                       value={qty[index]}
                       onChange={(e) => handleQtyChange(index, e.target.value)}

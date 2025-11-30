@@ -34,10 +34,22 @@ const Cupcakes = () => {
     },
   ];
 
+  // ⭐ Default qty = 0 for all products
   const [qty, setQty] = useState(items.map(() => 0));
 
   const handleQtyChange = (index, value) => {
-    const num = Math.max(1, Math.min(10, Number(value)));
+    let num = Number(value);
+
+    // Allow blank as 0
+    if (value === "" || num === 0) {
+      const updated = [...qty];
+      updated[index] = 0;
+      return setQty(updated);
+    }
+
+    // Block negative values and limit to 10
+    num = Math.max(1, Math.min(10, num));
+
     const updated = [...qty];
     updated[index] = num;
     setQty(updated);
@@ -45,7 +57,7 @@ const Cupcakes = () => {
 
   const handleAddToCart = async (item, qty) => {
     if (qty === 0) {
-      alert("⚠️ Please select quantity");
+      alert("⚠️ Please select quantity before adding to cart");
       return;
     }
 
@@ -60,6 +72,7 @@ const Cupcakes = () => {
 
     if (error) {
       alert("❌ Error adding to cart");
+      console.log(error);
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -67,7 +80,7 @@ const Cupcakes = () => {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* ⭐ BACKGROUND VIDEO */}
+      {/* BACKGROUND VIDEO */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
@@ -77,10 +90,10 @@ const Cupcakes = () => {
         playsInline
       />
 
-      {/* DARK OVERLAY */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black/40"></div>
 
-      {/* MAIN CONTENT */}
+      {/* Content */}
       <div className="relative z-10 py-16 px-6">
         <h1 className="text-3xl font-bold text-white text-center mb-10">
           Cupcakes 🧁
@@ -93,7 +106,7 @@ const Cupcakes = () => {
               className="bg-white/90 backdrop-blur-md p-6 rounded-xl shadow-lg hover:scale-[1.02] transition"
             >
               <div className="flex gap-6">
-                {/* IMAGE SIDE */}
+                {/* IMAGE */}
                 <div className="w-1/2">
                   <img
                     src={item.img}
@@ -123,7 +136,7 @@ const Cupcakes = () => {
 
                     <input
                       type="number"
-                      min="1"
+                      min="0"
                       max="10"
                       value={qty[index]}
                       onChange={(e) => handleQtyChange(index, e.target.value)}

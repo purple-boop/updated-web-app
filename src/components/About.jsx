@@ -1,5 +1,3 @@
-import React from "react";
-
 // IMPORT IMAGES / VIDEO PROPERLY
 import bgVideo from "../elements/bg-video.mp4";
 import aboutImg1 from "../elements/aboutus1.jpg";

@@ -15,6 +15,15 @@ function Login({ session, setSession }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+
+      // <-- FORCE fallback flag so App.jsx can trigger Terms modal when necessary
+      if (_event === "SIGNED_IN") {
+        try {
+          localStorage.setItem("force_terms_popup", "true");
+        } catch (e) {
+          /* ignore storage errors */
+        }
+      }
     });
 
     return () => subscription.unsubscribe();

@@ -1,7 +1,8 @@
 // App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import supabase from "./lib/supabaseClient";
 
 // Components
 import Navbar from "./components/Navbar.jsx";
@@ -13,10 +14,7 @@ import Login from "./components/Login.jsx";
 import Products from "./components/Products.jsx";
 import CustomerService from "./components/CustomerService.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
-
-// Pages
 import Carts from "./components/Carts.jsx";
-// 🔥 Your Carts.jsx MUST be inside /customer or fix path
 
 // Categories
 import Cakes from "./components/categories/Cakes.jsx";
@@ -29,19 +27,59 @@ import Macaroons from "./components/categories/Macaroons.jsx";
 // Terms Modal
 import TermsModal from "./components/TermsModal.jsx";
 
+// Public Landing Page
+import LandingPage from "./components/LandingPage.jsx";
+
 function App() {
   const [session, setSession] = useState(null);
-
-  // ⭐ Popup controller
   const [showTerms, setShowTerms] = useState(false);
+
+  const lastSession = useRef(null);
+
+  // Load active session on page open
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      lastSession.current = session?.user?.id || null;
+    });
+
+    // Detect login/logout
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+
+      if (_event === "SIGNED_IN") {
+        const newUserId = newSession?.user?.id;
+
+        // Show terms ONLY when it's a real login (NOT refresh)
+        if (lastSession.current !== newUserId) {
+          setShowTerms(true);
+        }
+
+        lastSession.current = newUserId;
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <Router>
-      <Navbar session={session} setSession={setSession} />
+      <Navbar session={session} />
 
       <Routes>
-        {/* HOME */}
-        <Route path="/" element={<Homepage />} />
+        {/* PUBLIC LANDING PAGE */}
+        <Route
+          path="/"
+          element={session ? <Homepage /> : <LandingPage session={session} />}
+        />
+
+        {/* LOGIN */}
+        <Route
+          path="/login"
+          element={<Login session={session} setSession={setSession} />}
+        />
 
         {/* PRODUCTS */}
         <Route path="/products" element={<Products />} />
@@ -52,13 +90,7 @@ function App() {
         <Route path="/products/donuts" element={<Donuts />} />
         <Route path="/products/macaroons" element={<Macaroons />} />
 
-        {/* AUTH */}
-        <Route
-          path="/login"
-          element={<Login session={session} setSession={setSession} />}
-        />
-
-        {/* PROTECTED CART PAGE */}
+        {/* PROTECTED CART */}
         <Route
           path="/cart"
           element={
@@ -74,10 +106,14 @@ function App() {
         <Route path="/customer-service" element={<CustomerService />} />
       </Routes>
 
-      {/* POPUP MODAL */}
-      <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
+      {/* TERMS POPUP */}
+      <TermsModal
+        isOpen={showTerms}
+        onClose={() => setShowTerms(false)}
+        user={session?.user}
+      />
 
-      {/* FOOTER triggers popup */}
+      {/* FOOTER */}
       <Footer onOpenTerms={() => setShowTerms(true)} />
     </Router>
   );

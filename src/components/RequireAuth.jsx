@@ -7,30 +7,27 @@ export default function RequireAuth({ children }) {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    // Get current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
 
-    // Listen for login/logout changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
       }
     );
 
-    // Cleanup subscription
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  // 🚨 FIX: NEVER redirect while loading!
+  if (loading) return null; // or loading spinner
 
-  // ❌ If NO session → redirect to login
+  // ❌ Only redirect AFTER session finished loading
   if (!session) return <Navigate to="/login" replace />;
 
-  // ✔ Logged in → allow access
   return children;
 }

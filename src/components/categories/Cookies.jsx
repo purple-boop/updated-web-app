@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "../../lib/supabaseClient";
 
 import ck1 from "../../elements/ck1.jpg";
@@ -34,32 +34,56 @@ const Cookies = () => {
     },
   ];
 
+  // DEFAULT = 0
   const [qty, setQty] = useState(items.map(() => 0));
+  const [user, setUser] = useState(null);
 
+  // get logged-in user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data?.user);
+    };
+    getUser();
+  }, []);
+
+  // qty input handler
   const handleQtyChange = (index, value) => {
-    const num = Math.max(1, Math.min(10, Number(value)));
+    let num = Number(value);
+
+    if (num < 0) num = 0;
+    if (num > 10) num = 10;
+
     const updated = [...qty];
     updated[index] = num;
     setQty(updated);
   };
 
-  const handleAddToCart = async (item, qty) => {
-    if (qty === 0) {
-      alert("Please select quantity");
+  // Add to cart
+  const handleAddToCart = async (item, selectedQty) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
+
+    if (selectedQty < 1) {
+      alert("Please enter quantity first 😊");
       return;
     }
 
     const { error } = await supabase.from("cart").insert([
       {
+        user_id: user.id,
         product_name: item.name,
         price: parseFloat(item.price.replace("₱", "")),
-        qty: qty,
+        qty: selectedQty,
         img: item.img,
       },
     ]);
 
     if (error) {
       alert("❌ Error adding to cart");
+      console.log(error);
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -67,7 +91,7 @@ const Cookies = () => {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* ⭐ BACKGROUND VIDEO */}
+      {/* Background Video */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
@@ -77,10 +101,10 @@ const Cookies = () => {
         playsInline
       />
 
-      {/* DARK OVERLAY */}
+      {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/40"></div>
 
-      {/* MAIN CONTENT */}
+      {/* Content */}
       <div className="relative z-10 py-16 px-6">
         <h1 className="text-3xl font-bold text-white text-center mb-10">
           Cookies 🍪
@@ -120,7 +144,7 @@ const Cookies = () => {
 
                     <input
                       type="number"
-                      min="1"
+                      min="0"
                       max="10"
                       value={qty[index]}
                       onChange={(e) => handleQtyChange(index, e.target.value)}

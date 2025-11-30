@@ -24,7 +24,7 @@ const HomePage = () => {
     <section className="relative w-full min-h-[1400px] overflow-hidden">
       {/* BG VIDEO */}
       <video
-        className="absolute top-0 left-0 w-full h-full object-cover opacity-500"
+        className="absolute top-0 left-0 w-full h-full object-cover opacity-950"
         src="/src/elements/bg-video.mp4"
         autoPlay
         loop
@@ -37,10 +37,10 @@ const HomePage = () => {
       {/* CONTENT */}
       <div className="relative z-10 w-full flex flex-col items-center px-4 pt-10">
         {/* SLIDER */}
-        <div className="relative w-[75%] h-[400px] rounded-2xl shadow-xl overflow-hidden mb-28">
+        <div className="relative w-[90%] h-[400px] rounded-2xl shadow-xl overflow-hidden mb-28">
           <img
             src={slides[index]}
-            className="w-full h-full object-cover transition-all duration-700 opacity-80"
+            className="w-full h-full object-cover transition-all duration-700 opacity-90"
           />
 
           <div className="absolute inset-0 bg-rose-300/20"></div>
@@ -57,7 +57,7 @@ const HomePage = () => {
             </h1>
 
             <p
-              className="text-xl md:text-lg font-semibold max-w-[850px] leading-relaxed"
+              className="text-xl md:text-lg font-semibold max-w-[800px] leading-relaxed"
               style={{
                 fontFamily:
                   "Serif, Lucida Calligraphy, Lucida Handwriting, Brush Script MT, cursive",
@@ -88,7 +88,7 @@ const HomePage = () => {
         <div className="flex justify-center w-full my-3">
           <div className="bg-gradient-to-r from-pink-300 to-rose-300 text-white py-2 px-8 rounded-full shadow-md border border-white select-none">
             <h2
-              className="text-2xl font-bold drop-shadow-sm"
+              className=" text-2xl font-bold drop-shadow-sm"
               style={{
                 fontFamily:
                   "Serif, Lucida Handwriting, Brush Script MT, cursive",
@@ -146,12 +146,12 @@ const HomePage = () => {
               desc: "Fresh lemon topping with creamy cheesecake base.",
             },
             {
-              img: "/src/elements/tarts.jpg",
+              img: "/src/elements/lemontart.jpg",
               title: "Mini Lemon Meringue Tart",
               desc: "Zesty lemon curd topped with fluffy meringue.",
             },
             {
-              img: "/src/elements/donuts.jpg",
+              img: "/src/elements/donato.jpg",
               title: "Vanilla Bean Cake Donuts",
               desc: "Cake donuts topped with blueberry glaze.",
             },
@@ -175,10 +175,10 @@ const HomePage = () => {
 };
 
 const Card = ({ img, title, desc }) => (
-  <div className="bg-white/80 backdrop-blur-sm shadow-xl rounded-xl overflow-hidden">
+  <div className="bg-pink-100 backdrop-blur-sm shadow-xl rounded-xl overflow-hidden">
     <img src={img} className="w-full h-[150px] object-cover" />
     <div className="p-4 text-center flex flex-col items-center">
-      <h3 className="text-lg font-bold mb-1 text-black">{title}</h3>
+      <h3 className="text-lg font-bold mb-1 text-pink-9">{title}</h3>
       <p className="text-gray-700 text-xs">{desc}</p>
     </div>
   </div>

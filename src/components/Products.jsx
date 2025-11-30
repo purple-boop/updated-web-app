@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 // 🖼️ Import Images
 import croissantImg from "../elements/croissant.jpg";
 import cakeImg from "../elements/pic.jpg";
-import cupcakeImg from "../elements/cupcake.jpg";
+import cpckeImg from "../elements/cpcke.jpg";
 import donutsImg from "../elements/donuts.jpg";
 import macaroonsImg from "../elements/macaroons.jpg";
 import cookiesImg from "../elements/cooki.jpg";
@@ -12,51 +12,51 @@ const Products = () => {
   const products = [
     {
       name: "Croissants",
-      desc: "Indulge in our heavenly sweet treats.",
+      desc: "Freshly baked flaky French pastries.",
       img: croissantImg,
-      btn: "Explore Pastries",
+      btn: "Explore Croissants",
       link: "/products/croissants",
     },
     {
       name: "Cakes",
-      desc: "Freshly baked with premium ingredients.",
+      desc: "Crafted with premium ingredients and love.",
       img: cakeImg,
-      btn: "View Selection",
+      btn: "View Cakes",
       link: "/products/cakes",
     },
     {
       name: "Cupcakes",
-      desc: "Crafted for your special celebrations.",
-      img: cupcakeImg,
-      btn: "Get Custom Cake",
+      desc: "Perfect for celebrations and cravings.",
+      img: cpckeImg,
+      btn: "Explore Cupcakes",
       link: "/products/cupcakes",
     },
     {
       name: "Donuts",
-      desc: "Freshly baked with premium ingredients.",
+      desc: "Soft, sweet, and freshly glazed daily.",
       img: donutsImg,
-      btn: "View Selection",
+      btn: "View Donuts",
       link: "/products/donuts",
     },
     {
       name: "Macaroons",
-      desc: "Freshly baked with premium ingredients.",
+      desc: "Delicate and colorful sweet treats.",
       img: macaroonsImg,
-      btn: "View Selection",
+      btn: "View Macaroons",
       link: "/products/macaroons",
     },
     {
       name: "Cookies",
-      desc: "Indulge in our heavenly sweet treats.",
+      desc: "Soft, chewy, and freshly baked cookies.",
       img: cookiesImg,
-      btn: "Explore Pastries",
+      btn: "Explore Cookies",
       link: "/products/cookies",
     },
   ];
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* ⭐ BACKGROUND VIDEO */}
+      {/* ⭐ Background Video */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
@@ -66,10 +66,10 @@ const Products = () => {
         playsInline
       />
 
-      {/* DARK OVERLAY */}
+      {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/40"></div>
 
-      {/* CONTENT */}
+      {/* Content */}
       <div className="relative z-10 py-16 px-6">
         <h1 className="text-center text-3xl md:text-4xl font-extrabold text-white mb-12">
           Our Best Sellers 🍰
