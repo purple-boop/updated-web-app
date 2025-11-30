@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "../../lib/supabaseClient";
 
 import mc1 from "../../elements/mc1.jpg";
@@ -7,66 +7,84 @@ import mc3 from "../../elements/mc3.jpg";
 import mc4 from "../../elements/mc4.jpg";
 
 const Macaroons = () => {
+  // ✔ REAL SUPABASE IDs (17–20)
   const items = [
     {
+      id: 17,
       name: "Pistachio Macaroon",
-      price: "₱85",
+      price: 85,
       desc: "Crunchy shell with a smooth pistachio cream filling.",
       img: mc1,
     },
     {
+      id: 18,
       name: "Raspberry Macaroon",
-      price: "₱95",
+      price: 95,
       desc: "Sweet and tart raspberry filling wrapped in a delicate cookie shell.",
       img: mc2,
     },
     {
+      id: 19,
       name: "Lemon Macaroon",
-      price: "₱90",
+      price: 90,
       desc: "Bright and zesty lemon cream inside a crisp yellow macaroon.",
       img: mc3,
     },
     {
+      id: 20,
       name: "Holiday Macaroon",
-      price: "₱110",
+      price: 110,
       desc: "Festive macaroon with creamy filling and Christmas-themed design.",
       img: mc4,
     },
   ];
 
-  // ⭐ DEFAULT QUANTITY = 0
   const [qty, setQty] = useState(items.map(() => 0));
+  const [user, setUser] = useState(null);
+
+  // Get logged-in user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data?.user);
+    };
+    getUser();
+  }, []);
 
   const handleQtyChange = (index, value) => {
     let num = Number(value);
 
-    if (num < 0) num = 0; // Prevent negative
-    if (num > 10) num = 10; // Max 10 only
+    if (num < 0) num = 0;
+    if (num > 10) num = 10;
 
     const updated = [...qty];
     updated[index] = num;
     setQty(updated);
   };
 
-  // ⭐ ADD TO CART
-  const handleAddToCart = async (item, qtyValue) => {
-    if (qtyValue === 0) {
+  // ✔ FIXED ADD TO CART
+  const handleAddToCart = async (item, quantity) => {
+    if (!user) {
+      alert("⚠️ Please log in first!");
+      return;
+    }
+
+    if (quantity < 1) {
       alert("⚠️ Please enter quantity first!");
       return;
     }
 
     const { error } = await supabase.from("cart").insert([
       {
-        product_name: item.name,
-        price: parseFloat(item.price.replace("₱", "")),
-        qty: qtyValue,
-        img: item.img,
+        user_id: user.id,
+        product_id: item.id, // ✔ Correct FK (17–20)
+        qty: quantity,
       },
     ]);
 
     if (error) {
-      alert("❌ Error adding to cart!");
       console.log(error);
+      alert("❌ Error adding to cart!");
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -112,7 +130,7 @@ const Macaroons = () => {
                   </h2>
                   <p className="text-gray-700 text-sm mt-2">{item.desc}</p>
                   <p className="text-pink-600 font-bold text-xl mt-2">
-                    {item.price}
+                    ₱{item.price}
                   </p>
 
                   <div className="flex justify-center items-center gap-3 mt-4">

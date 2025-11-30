@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "../../lib/supabaseClient";
 
 import cc1 from "../../elements/cc1.jpg";
@@ -7,72 +7,83 @@ import cc3 from "../../elements/cc3.jpg";
 import cc4 from "../../elements/cc4.jpg";
 
 const Cupcakes = () => {
+  // ✔ REAL SUPABASE IDs (9–12)
   const items = [
     {
+      id: 9,
       name: "Nutty Choco Delight",
-      price: "₱85",
+      price: 85,
       desc: "Rich chocolate cupcake topped with crushed nuts and a swirl of whipped cream.",
       img: cc1,
     },
     {
+      id: 10,
       name: "Strawberry Velvet Cupcake",
-      price: "₱120",
+      price: 120,
       desc: "Red velvet cupcake filled with sweetness and topped with fresh strawberry goodness.",
       img: cc2,
     },
     {
+      id: 11,
       name: "Blueberry Swirl Cupcake",
-      price: "₱125",
+      price: 125,
       desc: "Soft vanilla cupcake bursting with blueberry flavor and creamy blueberry icing.",
       img: cc3,
     },
     {
+      id: 12,
       name: "Biscoff Crumble Cupcake",
-      price: "₱135",
+      price: 135,
       desc: "Moist cupcake topped with creamy Biscoff frosting and cookie crumble for extra crunch.",
       img: cc4,
     },
   ];
 
-  // ⭐ Default qty = 0 for all products
   const [qty, setQty] = useState(items.map(() => 0));
+  const [user, setUser] = useState(null);
+
+  // Get logged-in user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data?.user);
+    };
+    getUser();
+  }, []);
 
   const handleQtyChange = (index, value) => {
     let num = Number(value);
 
-    // Allow blank as 0
+    // allow clearing input to 0
     if (value === "" || num === 0) {
       const updated = [...qty];
       updated[index] = 0;
       return setQty(updated);
     }
 
-    // Block negative values and limit to 10
-    num = Math.max(1, Math.min(10, num));
+    num = Math.max(1, Math.min(10, num)); // clamp 1–10
 
     const updated = [...qty];
     updated[index] = num;
     setQty(updated);
   };
 
-  const handleAddToCart = async (item, qty) => {
-    if (qty === 0) {
-      alert("⚠️ Please select quantity before adding to cart");
-      return;
-    }
+  // ✔ FIXED ADD TO CART (matches cart table exactly)
+  const handleAddToCart = async (item, quantity) => {
+    if (!user) return alert("⚠️ Please log in first");
+    if (quantity < 1) return alert("⚠️ Please select quantity");
 
     const { error } = await supabase.from("cart").insert([
       {
-        product_name: item.name,
-        price: parseFloat(item.price.replace("₱", "")),
-        qty: qty,
-        img: item.img,
+        user_id: user.id,
+        product_id: item.id, // ✔ Matches Supabase FK
+        qty: quantity,
       },
     ]);
 
     if (error) {
-      alert("❌ Error adding to cart");
       console.log(error);
+      alert("❌ Error adding to cart");
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -80,7 +91,7 @@ const Cupcakes = () => {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* BACKGROUND VIDEO */}
+      {/* Background Video */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
@@ -90,7 +101,6 @@ const Cupcakes = () => {
         playsInline
       />
 
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/40"></div>
 
       {/* Content */}
@@ -122,10 +132,9 @@ const Cupcakes = () => {
                   </h2>
                   <p className="text-gray-700 text-sm mt-2">{item.desc}</p>
                   <p className="text-pink-600 font-bold text-xl mt-2">
-                    {item.price}
+                    ₱{item.price}
                   </p>
 
-                  {/* BUTTONS */}
                   <div className="flex justify-center items-center gap-3 mt-4">
                     <button
                       onClick={() => handleAddToCart(item, qty[index])}

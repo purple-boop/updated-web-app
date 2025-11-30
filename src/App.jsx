@@ -1,7 +1,7 @@
 // App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import supabase from "./lib/supabaseClient";
 
 // Components
@@ -24,6 +24,11 @@ import Cupcakes from "./components/categories/Cupcakes.jsx";
 import Donuts from "./components/categories/Donuts.jsx";
 import Macaroons from "./components/categories/Macaroons.jsx";
 
+// Checkout & Payment
+import Checkout from "./components/Checkout.jsx";
+import Payment from "./components/Payment.jsx";
+import PaymentSuccess from "./components/PaymentSuccess.jsx";
+
 // Terms Modal
 import TermsModal from "./components/TermsModal.jsx";
 
@@ -34,30 +39,31 @@ function App() {
   const [session, setSession] = useState(null);
   const [showTerms, setShowTerms] = useState(false);
 
-  const lastSession = useRef(null);
-
-  // Load active session on page open
+  // Handle login session + Terms popup
   useEffect(() => {
+    // Load current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      lastSession.current = session?.user?.id || null;
     });
 
-    // Detect login/logout
+    // Listen for login / logout
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
 
-      if (_event === "SIGNED_IN") {
-        const newUserId = newSession?.user?.id;
-
-        // Show terms ONLY when it's a real login (NOT refresh)
-        if (lastSession.current !== newUserId) {
+      if (event === "SIGNED_IN") {
+        // Show Terms ONCE per login session
+        const hasSeenTerms = sessionStorage.getItem("hasSeenTerms");
+        if (!hasSeenTerms) {
           setShowTerms(true);
+          sessionStorage.setItem("hasSeenTerms", "true");
         }
+      }
 
-        lastSession.current = newUserId;
+      if (event === "SIGNED_OUT") {
+        // Clear so it appears again next login
+        sessionStorage.removeItem("hasSeenTerms");
       }
     });
 
@@ -69,7 +75,7 @@ function App() {
       <Navbar session={session} />
 
       <Routes>
-        {/* PUBLIC LANDING PAGE */}
+        {/* LANDING / HOME */}
         <Route
           path="/"
           element={session ? <Homepage /> : <LandingPage session={session} />}
@@ -81,7 +87,7 @@ function App() {
           element={<Login session={session} setSession={setSession} />}
         />
 
-        {/* PRODUCTS */}
+        {/* PRODUCT ROUTES */}
         <Route path="/products" element={<Products />} />
         <Route path="/products/cakes" element={<Cakes />} />
         <Route path="/products/cookies" element={<Cookies />} />
@@ -90,7 +96,12 @@ function App() {
         <Route path="/products/donuts" element={<Donuts />} />
         <Route path="/products/macaroons" element={<Macaroons />} />
 
-        {/* PROTECTED CART */}
+        {/* CHECKOUT & PAYMENT */}
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+
+        {/* CART - Protected */}
         <Route
           path="/cart"
           element={
@@ -100,13 +111,13 @@ function App() {
           }
         />
 
-        {/* INFO PAGES */}
+        {/* PAGES */}
         <Route path="/about" element={<About />} />
         <Route path="/faqs" element={<Faqs />} />
         <Route path="/customer-service" element={<CustomerService />} />
       </Routes>
 
-      {/* TERMS POPUP */}
+      {/* TERMS POPUP - only shows once per login */}
       <TermsModal
         isOpen={showTerms}
         onClose={() => setShowTerms(false)}

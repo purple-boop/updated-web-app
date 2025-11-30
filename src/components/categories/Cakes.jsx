@@ -8,34 +8,38 @@ import cakes from "../../elements/cakes.jpg";
 import roll from "../../elements/roll.jpg";
 
 const Cakes = () => {
+  // ✔ MATCHED TO REAL SUPABASE PRODUCT IDs (5–8)
   const items = [
     {
+      id: 5,
       name: "Chocolate Cake Roll",
-      price: "₱350",
+      price: 350,
       desc: "Rich and moist chocolate roll filled with creamy caramel frosting.",
       img: chocoRoll,
     },
     {
+      id: 6,
       name: "Fresh Strawberry Cake",
-      price: "₱480",
+      price: 480,
       desc: "Soft vanilla sponge layered with strawberry cream and topped with fresh berries.",
       img: fruitcake,
     },
     {
+      id: 7,
       name: "Berry Heart Cake",
-      price: "₱520",
+      price: 520,
       desc: "Romantic pink cake decorated with berry hearts and whipped cream swirls.",
       img: cakes,
     },
     {
+      id: 8,
       name: "Mocha Cream Roll",
-      price: "₱380",
+      price: 380,
       desc: "Soft mocha-flavored roll filled with silky coffee cream.",
       img: roll,
     },
   ];
 
-  // qty default = 0
   const [qty, setQty] = useState(items.map(() => 0));
   const [user, setUser] = useState(null);
 
@@ -51,7 +55,6 @@ const Cakes = () => {
   // HANDLE QTY CHANGE
   const handleQtyChange = (index, value) => {
     let num = Number(value);
-
     if (num < 0) num = 0;
     if (num > 10) num = 10;
 
@@ -60,7 +63,7 @@ const Cakes = () => {
     setQty(updated);
   };
 
-  // ADD TO CART FUNCTION
+  // ✔ FINAL FIXED ADD TO CART (NO INVALID COLUMNS)
   const handleAddToCart = async (item, selectedQty) => {
     if (!user) {
       alert("Please login first.");
@@ -75,14 +78,13 @@ const Cakes = () => {
     const { error } = await supabase.from("cart").insert([
       {
         user_id: user.id,
-        product_name: item.name,
-        price: parseFloat(item.price.replace("₱", "")),
-        qty: selectedQty,
-        img: item.img,
+        product_id: item.id, // ✔ Correct FK
+        qty: selectedQty, // ✔ Only allowed columns
       },
     ]);
 
     if (error) {
+      console.log("Add to cart error:", error);
       alert("Error adding to cart.");
     } else {
       alert("✔ Added to cart!");
@@ -133,7 +135,7 @@ const Cakes = () => {
                   </h2>
                   <p className="text-gray-700 text-sm mt-2">{item.desc}</p>
                   <p className="text-pink-600 font-bold text-xl mt-2">
-                    {item.price}
+                    ₱{item.price}
                   </p>
 
                   {/* BUTTON + QTY */}

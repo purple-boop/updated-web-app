@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "../../lib/supabaseClient";
 
 import dnt1 from "../../elements/dnt1.jpg";
@@ -7,65 +7,84 @@ import dnt3 from "../../elements/dnt3.jpg";
 import dnt4 from "../../elements/dnt4.jpg";
 
 const Donuts = () => {
+  // ✔ REAL SUPABASE IDs (13–16)
   const items = [
     {
+      id: 13,
       name: "Crème Brûlée Donut",
-      price: "₱120",
+      price: 120,
       desc: "Luxuriously filled donut with creamy custard and a caramelized sugar top.",
       img: dnt1,
     },
     {
+      id: 14,
       name: "Strawberry Frosted Donut",
-      price: "₱110",
+      price: 110,
       desc: "Soft donut topped with sweet strawberry glaze and real strawberry bits.",
       img: dnt2,
     },
     {
+      id: 15,
       name: "Triple Chocolate Donut",
-      price: "₱130",
+      price: 130,
       desc: "Decadent donut covered in rich chocolate and topped with chocolate drizzle.",
       img: dnt3,
     },
     {
+      id: 16,
       name: "Classic Filled Donut",
-      price: "₱100",
+      price: 100,
       desc: "Soft classic donut with a smooth, creamy filling inside.",
       img: dnt4,
     },
   ];
 
-  // DEFAULT = 0
   const [qty, setQty] = useState(items.map(() => 0));
+  const [user, setUser] = useState(null);
+
+  // Get logged-in user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data?.user);
+    };
+    getUser();
+  }, []);
 
   const handleQtyChange = (index, value) => {
     let num = Number(value);
 
-    if (num < 0) num = 0; // allow 0
-    if (num > 10) num = 10; // max 10
+    if (num < 0) num = 0;
+    if (num > 10) num = 10;
 
     const updated = [...qty];
     updated[index] = num;
     setQty(updated);
   };
 
-  const handleAddToCart = async (item, qty) => {
-    if (qty === 0) {
+  // ✔ FIXED ADD TO CART — matches your 'cart' table
+  const handleAddToCart = async (item, quantity) => {
+    if (!user) {
+      alert("⚠️ Please log in first.");
+      return;
+    }
+
+    if (quantity < 1) {
       alert("⚠️ Please select at least 1 quantity.");
       return;
     }
 
     const { error } = await supabase.from("cart").insert([
       {
-        product_name: item.name,
-        price: parseFloat(item.price.replace("₱", "")),
-        qty: qty,
-        img: item.img,
+        user_id: user.id,
+        product_id: item.id, // ✔ Correct ID (13–16)
+        qty: quantity,
       },
     ]);
 
     if (error) {
+      console.log("Add to cart error:", error);
       alert("❌ Error adding to cart");
-      console.log(error);
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -73,7 +92,7 @@ const Donuts = () => {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
-      {/* ⭐ BACKGROUND VIDEO */}
+      {/* BACKGROUND VIDEO */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
@@ -97,6 +116,7 @@ const Donuts = () => {
               className="bg-white/90 backdrop-blur-md p-6 rounded-xl shadow-lg hover:scale-[1.02] transition"
             >
               <div className="flex gap-6">
+                {/* IMAGE */}
                 <div className="w-1/2">
                   <img
                     src={item.img}
@@ -105,13 +125,14 @@ const Donuts = () => {
                   />
                 </div>
 
+                {/* DETAILS */}
                 <div className="w-1/2 flex flex-col justify-center text-center">
                   <h2 className="text-xl font-bold text-pink-700">
                     {item.name}
                   </h2>
                   <p className="text-gray-700 text-sm mt-2">{item.desc}</p>
                   <p className="text-pink-600 font-bold text-xl mt-2">
-                    {item.price}
+                    ₱{item.price}
                   </p>
 
                   <div className="flex justify-center items-center gap-3 mt-4">

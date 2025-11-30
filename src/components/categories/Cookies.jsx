@@ -7,38 +7,42 @@ import ck3 from "../../elements/ck3.jpg";
 import ck4 from "../../elements/ck4.jpg";
 
 const Cookies = () => {
+  // ✔ REAL SUPABASE PRODUCT IDs (21–24)
   const items = [
     {
+      id: 21,
       name: "Caramel Crunch Cookie",
-      price: "₱85",
+      price: 85,
       desc: "Soft-baked cookie filled with caramel and topped with white chocolate drizzle.",
       img: ck1,
     },
     {
+      id: 22,
       name: "Pistachio Bliss Cookie",
-      price: "₱120",
+      price: 120,
       desc: "Chewy premium cookie loaded with pistachios and a rich nutty flavor.",
       img: ck4,
     },
     {
+      id: 23,
       name: "Red Velvet White Choco Cookie",
-      price: "₱110",
+      price: 110,
       desc: "Moist red velvet cookie packed with creamy white chocolate filling.",
       img: ck3,
     },
     {
+      id: 24,
       name: "S’mores Melt Cookie",
-      price: "₱95",
+      price: 95,
       desc: "Gooey s’mores cookie with toasted marshmallow, chocolate chunks, and graham bits.",
       img: ck2,
     },
   ];
 
-  // DEFAULT = 0
   const [qty, setQty] = useState(items.map(() => 0));
   const [user, setUser] = useState(null);
 
-  // get logged-in user
+  // Get logged-in user
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -47,10 +51,9 @@ const Cookies = () => {
     getUser();
   }, []);
 
-  // qty input handler
+  // Qty input handler
   const handleQtyChange = (index, value) => {
     let num = Number(value);
-
     if (num < 0) num = 0;
     if (num > 10) num = 10;
 
@@ -59,7 +62,7 @@ const Cookies = () => {
     setQty(updated);
   };
 
-  // Add to cart
+  // ✔ FIXED ADD TO CART — ONLY VALID COLUMNS
   const handleAddToCart = async (item, selectedQty) => {
     if (!user) {
       alert("Please login first.");
@@ -74,16 +77,14 @@ const Cookies = () => {
     const { error } = await supabase.from("cart").insert([
       {
         user_id: user.id,
-        product_name: item.name,
-        price: parseFloat(item.price.replace("₱", "")),
+        product_id: item.id, // ✔ Correct FK (21–24)
         qty: selectedQty,
-        img: item.img,
       },
     ]);
 
     if (error) {
+      console.log("Add to cart error:", error);
       alert("❌ Error adding to cart");
-      console.log(error);
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -131,7 +132,7 @@ const Cookies = () => {
                   </h2>
                   <p className="text-gray-700 text-sm mt-2">{item.desc}</p>
                   <p className="text-pink-600 font-bold text-xl mt-2">
-                    {item.price}
+                    ₱{item.price}
                   </p>
 
                   <div className="flex justify-center items-center gap-3 mt-4">

@@ -5,19 +5,31 @@ const Carts = () => {
   const [cartItems, setCartItems] = useState([]);
   const [user, setUser] = useState(null);
 
-  // 🔐 FETCH CURRENT USER
+  // 🔐 GET CURRENT USER
   const getCurrentUser = async () => {
     const { data } = await supabase.auth.getUser();
     setUser(data?.user || null);
   };
 
-  // 🛒 GET CART ITEMS FOR THIS USER
+  // 🛒 FETCH CART + JOIN PRODUCTS TABLE
   const fetchCart = async () => {
     if (!user) return;
 
     const { data, error } = await supabase
       .from("cart")
-      .select("*")
+      .select(
+        `
+        id,
+        qty,
+        product_id,
+        products (
+          id,
+          name,
+          price,
+          image
+        )
+      `
+      )
       .eq("user_id", user.id)
       .order("id", { ascending: false });
 
@@ -26,6 +38,7 @@ const Carts = () => {
       return;
     }
 
+    console.log("CART RESULT:", data); // Debugging
     setCartItems(data);
   };
 
@@ -33,27 +46,27 @@ const Carts = () => {
   const handleRemove = async (id) => {
     const { error } = await supabase.from("cart").delete().eq("id", id);
 
-    if (!error) {
-      alert("Removed from cart");
-      fetchCart(); // refresh UI
-    } else {
-      alert("Error removing item");
+    if (error) {
+      alert("Error removing item.");
       console.log(error);
+    } else {
+      alert("Removed from cart.");
+      fetchCart();
     }
   };
 
-  // 💰 COMPUTE TOTAL PRICE
+  // 💰 TOTAL PRICE
   const totalPrice = cartItems.reduce(
-    (sum, item) => sum + Number(item.price) * Number(item.qty),
+    (sum, item) => sum + Number(item.products?.price || 0) * Number(item.qty),
     0
   );
 
-  // Run once: get user
+  // Load user once
   useEffect(() => {
     getCurrentUser();
   }, []);
 
-  // When user loads, fetch cart
+  // Load cart after user loads
   useEffect(() => {
     fetchCart();
   }, [user]);
@@ -62,10 +75,12 @@ const Carts = () => {
     <section className="p-6">
       <h1 className="text-3xl font-bold text-pink-600 mb-6">🛒 My Cart</h1>
 
+      {/* If cart is empty */}
       {cartItems.length === 0 ? (
         <p className="text-gray-600">Your cart is empty.</p>
       ) : (
         <>
+          {/* LIST ITEMS */}
           <div className="grid gap-4 mb-6">
             {cartItems.map((item) => (
               <div
@@ -74,14 +89,16 @@ const Carts = () => {
               >
                 <div className="flex gap-4 items-center">
                   <img
-                    src={item.img}
+                    src={item.products?.image}
                     className="w-20 h-20 object-cover rounded"
-                    alt={item.product_name}
+                    alt={item.products?.name}
                   />
 
                   <div>
-                    <p className="font-bold">{item.product_name}</p>
-                    <p className="text-pink-600 font-semibold">₱{item.price}</p>
+                    <p className="font-bold">{item.products?.name}</p>
+                    <p className="text-pink-600 font-semibold">
+                      ₱{item.products?.price}
+                    </p>
                     <p className="text-sm text-gray-600">Qty: {item.qty}</p>
                   </div>
                 </div>
@@ -96,11 +113,24 @@ const Carts = () => {
             ))}
           </div>
 
-          {/* TOTAL PRICE */}
+          {/* TOTAL */}
           <div className="bg-white p-4 shadow rounded text-right">
             <p className="text-xl font-bold">
-              Total: <span className="text-pink-600">₱{totalPrice}</span>
+              Total:{" "}
+              <span className="text-pink-600">
+                ₱{totalPrice.toLocaleString()}
+              </span>
             </p>
+          </div>
+
+          {/* CHECKOUT BUTTON */}
+          <div className="text-right mt-4">
+            <button
+              onClick={() => (window.location.href = "/checkout")}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
+            >
+              Proceed to Checkout
+            </button>
           </div>
         </>
       )}

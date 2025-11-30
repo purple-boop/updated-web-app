@@ -24,7 +24,7 @@ const HomePage = () => {
     <section className="relative w-full min-h-[1400px] overflow-hidden">
       {/* BG VIDEO */}
       <video
-        className="absolute top-0 left-0 w-full h-full object-cover opacity-950"
+        className="absolute top-0 left-0 w-full h-full object-cover"
         src="/src/elements/bg-video.mp4"
         autoPlay
         loop
@@ -40,7 +40,7 @@ const HomePage = () => {
         <div className="relative w-[90%] h-[400px] rounded-2xl shadow-xl overflow-hidden mb-28">
           <img
             src={slides[index]}
-            className="w-full h-full object-cover transition-all duration-700 opacity-90"
+            className="w-full h-full object-cover transition-all duration-700"
           />
 
           <div className="absolute inset-0 bg-rose-300/20"></div>

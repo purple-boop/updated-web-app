@@ -7,34 +7,38 @@ import plaincrosini from "../../elements/plaincrosini.jpg";
 import crosini from "../../elements/crosini.jpg";
 
 const Croissants = () => {
+  // ✔ REAL SUPABASE product_id VALUES (1–4)
   const items = [
     {
+      id: 1,
       name: "Savory Bacon Veggie Croissant",
-      price: "₱145",
+      price: 145,
       desc: "Stuffed with fresh veggies, crispy bacon, and creamy dressing — perfect for a hearty snack.",
       img: csant,
     },
     {
+      id: 2,
       name: "Strawberry Cream Croissant",
-      price: "₱160",
+      price: 160,
       desc: "Light, flaky pastry filled with whipped cream and sweet fresh strawberries.",
       img: csantberry,
     },
     {
+      id: 3,
       name: "Classic Plain Croissant",
-      price: "₱95",
+      price: 95,
       desc: "Golden, buttery, and perfectly flaky — the traditional French croissant.",
       img: plaincrosini,
     },
     {
+      id: 4,
       name: "Almond Choco Croissant",
-      price: "₱155",
+      price: 155,
       desc: "A rich croissant filled with chocolate and topped with almond crunch.",
       img: crosini,
     },
   ];
 
-  // DEFAULT QTY → all zero
   const [qty, setQty] = useState(items.map(() => 0));
   const [user, setUser] = useState(null);
 
@@ -49,8 +53,7 @@ const Croissants = () => {
 
   const handleQtyChange = (index, value) => {
     let num = Number(value);
-
-    if (num < 0) num = 0; // allow 0
+    if (num < 0) num = 0;
     if (num > 10) num = 10;
 
     const updated = [...qty];
@@ -58,6 +61,7 @@ const Croissants = () => {
     setQty(updated);
   };
 
+  // ✔ FIXED ADD TO CART — only valid columns
   const handleAddToCart = async (item, selectedQty) => {
     if (!user) {
       alert("Please log in first.");
@@ -72,16 +76,14 @@ const Croissants = () => {
     const { error } = await supabase.from("cart").insert([
       {
         user_id: user.id,
-        product_name: item.name,
-        price: parseFloat(item.price.replace("₱", "")),
+        product_id: item.id, // ✔ correct FK (1–4)
         qty: selectedQty,
-        img: item.img,
       },
     ]);
 
     if (error) {
+      console.log("Add to cart error:", error);
       alert("❌ Error adding to cart!");
-      console.log(error);
     } else {
       alert("✔ Successfully added to cart!");
     }
@@ -130,7 +132,7 @@ const Croissants = () => {
                   </h2>
                   <p className="text-gray-700 text-sm mt-2">{item.desc}</p>
                   <p className="text-pink-600 font-bold text-xl mt-2">
-                    {item.price}
+                    ₱{item.price}
                   </p>
 
                   <div className="flex justify-center items-center gap-3 mt-4">
