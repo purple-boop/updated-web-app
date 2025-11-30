@@ -1,0 +1,66 @@
+/* =========================
+   ADMIN LAYOUT CONTAINER
+========================= */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: #fde8f0;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.admin-sidebar {
+  width: 260px;
+  background: linear-gradient(#ff8fb1, #ff5daa);
+  padding: 25px;
+  box-sizing: border-box;
+  color: white;
+  position: fixed;
+  top: 80px; /* below navbar */
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  border-radius: 0 10px 10px 0;
+}
+
+.admin-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.admin-nav a {
+  display: block;
+  padding: 12px 15px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  color: #fff;
+  transition: 0.3s ease;
+}
+
+.admin-nav a.active {
+  background: white;
+  color: #d63384;
+  font-weight: bold;
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+.admin-content {
+  margin-left: 260px; /* para hindi pumasok sa sidebar */
+  padding: 40px;
+  width: calc(100% - 260px);
+  min-height: 100vh;
+  margin-top: 80px; /* below navbar */
+  box-sizing: border-box;
+}

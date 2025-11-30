@@ -7,7 +7,7 @@ export default function LandingPage({ session }) {
 
   const slides = [
     "/src/elements/landingpage3.jpg",
-    "/src/elements/landingpage2.jpg",
+    "/src/elements/landingpage5.jpg",
     "/src/elements/landingpage4.jpg",
   ];
 

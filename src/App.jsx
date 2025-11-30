@@ -14,6 +14,16 @@ import Login from "./components/Login.jsx";
 import Products from "./components/Products.jsx";
 import CustomerService from "./components/CustomerService.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
+import RequireAdmin from "./components/RequireAdmin.jsx";
+
+// ADMIN FILES
+import AdminLayout from "./components/admin/AdminLayout.jsx";
+import AdminDashboard from "./components/admin/AdminDashboard.jsx";
+import AdminAddProduct from "./components/admin/AdminAddProduct.jsx";
+import AdminOrders from "./components/admin/AdminOrders.jsx";
+import AdminProducts from "./components/admin/AdminProducts.jsx";
+import AdminUsers from "./components/admin/AdminUsers.jsx";
+
 import Carts from "./components/Carts.jsx";
 
 // Categories
@@ -33,7 +43,7 @@ import PaymentSuccess from "./components/PaymentSuccess.jsx";
 import TermsModal from "./components/TermsModal.jsx";
 
 // Public Landing Page
-import LandingPage from "./components/LandingPage.jsx";
+import LandingPage from "./components/Landingpage.jsx";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -41,19 +51,16 @@ function App() {
 
   // Handle login session + Terms popup
   useEffect(() => {
-    // Load current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    // Listen for login / logout
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
 
       if (event === "SIGNED_IN") {
-        // Show Terms ONCE per login session
         const hasSeenTerms = sessionStorage.getItem("hasSeenTerms");
         if (!hasSeenTerms) {
           setShowTerms(true);
@@ -62,7 +69,6 @@ function App() {
       }
 
       if (event === "SIGNED_OUT") {
-        // Clear so it appears again next login
         sessionStorage.removeItem("hasSeenTerms");
       }
     });
@@ -75,7 +81,7 @@ function App() {
       <Navbar session={session} />
 
       <Routes>
-        {/* LANDING / HOME */}
+        {/* HOME / LANDING */}
         <Route
           path="/"
           element={session ? <Homepage /> : <LandingPage session={session} />}
@@ -87,7 +93,23 @@ function App() {
           element={<Login session={session} setSession={setSession} />}
         />
 
-        {/* PRODUCT ROUTES */}
+        {/* ================== ADMIN ROUTES ================== */}
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <AdminLayout />
+            </RequireAdmin>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="products/add" element={<AdminAddProduct />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="users" element={<AdminUsers />} />
+        </Route>
+
+        {/* ================== PUBLIC PRODUCT ROUTES ================== */}
         <Route path="/products" element={<Products />} />
         <Route path="/products/cakes" element={<Cakes />} />
         <Route path="/products/cookies" element={<Cookies />} />
@@ -96,12 +118,12 @@ function App() {
         <Route path="/products/donuts" element={<Donuts />} />
         <Route path="/products/macaroons" element={<Macaroons />} />
 
-        {/* CHECKOUT & PAYMENT */}
+        {/* ================== CHECKOUT & PAYMENT ================== */}
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
 
-        {/* CART - Protected */}
+        {/* CART — Protected */}
         <Route
           path="/cart"
           element={
@@ -111,20 +133,19 @@ function App() {
           }
         />
 
-        {/* PAGES */}
+        {/* STATIC PAGES */}
         <Route path="/about" element={<About />} />
         <Route path="/faqs" element={<Faqs />} />
         <Route path="/customer-service" element={<CustomerService />} />
       </Routes>
 
-      {/* TERMS POPUP - only shows once per login */}
+      {/* TERMS POPUP */}
       <TermsModal
         isOpen={showTerms}
         onClose={() => setShowTerms(false)}
         user={session?.user}
       />
 
-      {/* FOOTER */}
       <Footer onOpenTerms={() => setShowTerms(true)} />
     </Router>
   );
