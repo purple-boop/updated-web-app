@@ -9,19 +9,47 @@ const AdminLayout = () => {
         <h2 className="admin-title">Admin Panel</h2>
 
         <nav className="admin-nav">
-          <NavLink to="/admin" end>
+          <NavLink
+            to="/admin"
+            end
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             🏠 Dashboard
           </NavLink>
-          <NavLink to="/admin/products">📦 Manage Products</NavLink>
-          <NavLink to="/admin/products/add">➕ Add Product</NavLink>
-          <NavLink to="/admin/orders">🧾 Orders</NavLink>
-          <NavLink to="/admin/users">👥 User Management</NavLink>
+
+          <NavLink
+            to="/admin/products"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            📦 Manage Products
+          </NavLink>
+
+          <NavLink
+            to="/admin/products/add"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            ➕ Add Product
+          </NavLink>
+
+          <NavLink
+            to="/admin/orders"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            🧾 Orders
+          </NavLink>
+
+          <NavLink
+            to="/admin/users"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            👥 User Management
+          </NavLink>
         </nav>
       </aside>
 
       {/* MAIN CONTENT */}
       <main className="admin-content">
-        <Outlet /> {/* <<< DITO LUMALABAS ANG UI */}
+        <Outlet />
       </main>
     </div>
   );

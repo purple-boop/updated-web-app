@@ -14,10 +14,9 @@
   width: 260px;
   background: linear-gradient(#ff8fb1, #ff5daa);
   padding: 25px;
-  box-sizing: border-box;
   color: white;
   position: fixed;
-  top: 80px; /* below navbar */
+  top: 80px;
   left: 0;
   bottom: 0;
   overflow-y: auto;
@@ -33,34 +32,37 @@
 .admin-nav {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
 .admin-nav a {
-  display: block;
   padding: 12px 15px;
-  margin-bottom: 5px;
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
   color: #fff;
+  display: block;
   transition: 0.3s ease;
 }
 
+/* ACTIVE LINK FIX */
 .admin-nav a.active {
-  background: white;
-  color: #d63384;
+  background: white !important;
+  color: #d63384 !important;
   font-weight: bold;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 /* =========================
    MAIN CONTENT
 ========================= */
 .admin-content {
-  margin-left: 260px; /* para hindi pumasok sa sidebar */
+  margin-left: 260px;
   padding: 40px;
   width: calc(100% - 260px);
   min-height: 100vh;
-  margin-top: 80px; /* below navbar */
+  margin-top: 80px;
   box-sizing: border-box;
+  z-index: 1;
+  position: relative;
 }
