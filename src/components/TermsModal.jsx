@@ -7,8 +7,9 @@ const TermsModal = ({ isOpen, onClose, user }) => {
   if (!isOpen) return null;
 
   const handleCheckbox = () => {
-    // allow checking, pero optional kung gusto mong i‑lock ang uncheck
-    setAgree(!agree);
+    if (!agree) {
+      setAgree(true); // allow checking one time, disable uncheck
+    }
   };
 
   const handleContinue = () => {
@@ -17,7 +18,6 @@ const TermsModal = ({ isOpen, onClose, user }) => {
       return;
     }
 
-    // Save user acceptance
     if (user?.id) {
       localStorage.setItem(`accepted_terms_${user.id}`, "true");
     }

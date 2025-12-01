@@ -1,6 +1,11 @@
 const Footer = ({ onOpenTerms }) => {
   return (
-    <footer className="bg-gradient-to-r from-rose-300 to-pink-300 py-10 shadow-inner border-t-2 border-rose-200">
+    <footer
+      className="
+        bg-gradient-to-r from-rose-300 to-pink-300 py-4 shadow-inner border-t-2 border-rose-200
+        fixed bottom-0 left-0 w-full z-50
+      "
+    >
       <div
         className="
           max-w-7xl mx-auto
@@ -32,12 +37,10 @@ const Footer = ({ onOpenTerms }) => {
 
         {/* RIGHT — INLINE LINKS */}
         <div className="flex gap-8 text-white font-semibold text-lg">
-          {/* CUSTOMER SERVICE */}
           <span className="cursor-pointer hover:text-rose-100 transition drop-shadow-sm">
             <a href="/customer-service">Customer Service</a>
           </span>
 
-          {/* TERMS — OPENS MODAL */}
           <span
             className="cursor-pointer hover:text-rose-100 transition drop-shadow-sm"
             onClick={onOpenTerms}
